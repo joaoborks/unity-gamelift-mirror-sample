@@ -1,5 +1,6 @@
 using UnityEngine;
 #if SERVER
+using Mirror;
 using Aws.GameLift.Server;
 using System.Collections.Generic;
 #endif
@@ -7,6 +8,13 @@ using System.Collections.Generic;
 public class GameLiftServer : MonoBehaviour
 {
 #if SERVER
+    NetworkManager networkManager;
+
+    void Awake()
+    {
+        networkManager = FindObjectOfType<NetworkManager>();
+    }
+
     //This is an example of a simple integration with GameLift server SDK that will make game server processes go active on GameLift!
     public void Start()
    {
@@ -24,6 +32,7 @@ public class GameLiftServer : MonoBehaviour
                 //Here is where a game server should take action based on the game session object.
                 //Once the game server is ready to receive incoming player connections, it should invoke GameLiftServerAPI.ActivateGameSession()
                 GameLiftServerAPI.ActivateGameSession();
+                networkManager.StartServer();
              },
              (updateGameSession) =>
              {

@@ -7,15 +7,8 @@
       "dependencies": {},
       "hash": "862f5a2c5bad4f647ec99051f82a2f19c76e356b"
     },
-    "com.unity.collab-proxy": {
-      "version": "1.2.16",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
     "com.unity.ext.nunit": {
-      "version": "1.0.5",
+      "version": "1.0.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -66,18 +59,18 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.19",
+      "version": "1.1.22",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.ext.nunit": "1.0.5",
+        "com.unity.ext.nunit": "1.0.6",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "2.1.1",
+      "version": "2.1.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -86,10 +79,15 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.2.17",
+      "version": "1.2.18",
       "depth": 0,
       "source": "registry",
-      "dependencies": {},
+      "dependencies": {
+        "com.unity.modules.director": "1.0.0",
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.modules.audio": "1.0.0",
+        "com.unity.modules.particlesystem": "1.0.0"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.ugui": {

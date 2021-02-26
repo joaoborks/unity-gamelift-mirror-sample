@@ -4,16 +4,19 @@
  * Created on: 2/24/2021 (en-US)
  */
 
+#if CLIENT
 using Amazon;
 using Amazon.GameLift;
 using Amazon.GameLift.Model;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
+using Mirror;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+#endif
 using UnityEngine;
 
 public class GameLiftClient : MonoBehaviour
@@ -21,7 +24,13 @@ public class GameLiftClient : MonoBehaviour
 #if CLIENT
     AmazonGameLiftClient client;
     PlayerSession currentPlayerSession;
+    NetworkManager networkManager;
     string playerId;
+
+    void Awake()
+    {
+        networkManager = FindObjectOfType<NetworkManager>();
+    }
 
     void Start()
     {
@@ -46,6 +55,9 @@ public class GameLiftClient : MonoBehaviour
         Debug.Log($"Attempting to join session {sessionId}");
         currentPlayerSession = await CreatePlayerSessionAsync(sessionId);
         Debug.Log($"Successfully connected to session {currentPlayerSession.GameSessionId} at [{currentPlayerSession.DnsName}] {currentPlayerSession.IpAddress}:{currentPlayerSession.Port}");
+        Debug.Log($"Attempting to Mirror Server at [{currentPlayerSession.DnsName}] {currentPlayerSession.IpAddress}:{currentPlayerSession.Port}");
+        networkManager.StartClient(new Uri($"tcp4://{currentPlayerSession.DnsName}"));
+        Debug.Log($"Successfully connected to Mirror Server at [{currentPlayerSession.DnsName}] {currentPlayerSession.IpAddress}:{currentPlayerSession.Port}");
     }
 
     async Task<List<GameSession>> GetActiveGameSessionsAsync(CancellationToken token = default)
