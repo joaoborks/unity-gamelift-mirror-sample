@@ -8,8 +8,6 @@
 using Amazon;
 using Amazon.GameLift;
 using Amazon.GameLift.Model;
-using Amazon.Runtime;
-using Amazon.Runtime.CredentialManagement;
 using Mirror;
 using System;
 using System.Collections.Generic;
@@ -22,6 +20,12 @@ using UnityEngine;
 public class GameLiftClient : MonoBehaviour
 {
 #if CLIENT
+    public string PlayerSessionId => currentPlayerSession.PlayerSessionId;
+    public string PlayerId => playerId;
+
+    [SerializeField]
+    bool local;
+
     AmazonGameLiftClient client;
     PlayerSession currentPlayerSession;
     NetworkManager networkManager;
@@ -34,12 +38,12 @@ public class GameLiftClient : MonoBehaviour
 
     void Start()
     {
-        var config = new AmazonGameLiftConfig()
-        {
-            ServiceURL = "http://10.0.1.2:7778"
-        };
-        Debug.Log(config.DetermineServiceURL());
-        client = new AmazonGameLiftClient("key", "key", config);
+        var config = new AmazonGameLiftConfig();
+        if (local)
+            config.ServiceURL = "http://localhost:7778";
+        else
+            config.RegionEndpoint = RegionEndpoint.USEast2;
+        client = new AmazonGameLiftClient("access-key", "secret-key", config);
         playerId = Guid.NewGuid().ToString();
 
         Quickplay();
@@ -47,32 +51,43 @@ public class GameLiftClient : MonoBehaviour
 
     async void Quickplay()
     {
-        var sessions = await GetActiveGameSessionsAsync();
+        var fleets = new List<string>();
+        if (!local)
+        {
+            fleets = await GetFleets();
+            Debug.Log($"Found {fleets.Count} active Fleets");
+            if (fleets.Count <= 0)
+                return;
+        }
+        var sessions = await GetActiveGameSessionsAsync(local ? "fleet-123" : fleets.First());
         Debug.Log($"Found {sessions.Count} active Game Sessions");
         if (sessions.Count <= 0)
             return;
         var sessionId = sessions.FirstOrDefault(s => s.Status == GameSessionStatus.ACTIVE).GameSessionId;
-        Debug.Log($"Attempting to join session {sessionId}");
         currentPlayerSession = await CreatePlayerSessionAsync(sessionId);
         Debug.Log($"Successfully connected to session {currentPlayerSession.GameSessionId} at [{currentPlayerSession.DnsName}] {currentPlayerSession.IpAddress}:{currentPlayerSession.Port}");
-        Debug.Log($"Attempting to Mirror Server at [{currentPlayerSession.DnsName}] {currentPlayerSession.IpAddress}:{currentPlayerSession.Port}");
-        networkManager.StartClient(new Uri($"tcp4://{currentPlayerSession.DnsName}"));
-        Debug.Log($"Successfully connected to Mirror Server at [{currentPlayerSession.DnsName}] {currentPlayerSession.IpAddress}:{currentPlayerSession.Port}");
+        networkManager.networkAddress = currentPlayerSession.IpAddress;
+        networkManager.StartClient();
     }
 
-    async Task<List<GameSession>> GetActiveGameSessionsAsync(CancellationToken token = default)
+    async Task<List<string>> GetFleets(CancellationToken token = default)
     {
-        var request = new DescribeGameSessionsRequest()
+        var response = await client.ListFleetsAsync(new ListFleetsRequest(), token);
+        return response.FleetIds;
+    }
+
+    async Task<List<GameSession>> GetActiveGameSessionsAsync(string fleetId, CancellationToken token = default)
+    {
+        var response = await client.DescribeGameSessionsAsync(new DescribeGameSessionsRequest()
         {
-            FleetId = "fleet-123"
-        };
-        var response = await client.DescribeGameSessionsAsync(request);
+            FleetId = fleetId
+        }, token);
         return response.GameSessions;
     }
 
     async Task<PlayerSession> CreatePlayerSessionAsync(string gameSessionId, CancellationToken token = default)
     {
-        var response = await client.CreatePlayerSessionAsync(gameSessionId, playerId);
+        var response = await client.CreatePlayerSessionAsync(gameSessionId, playerId, token);
         return response.PlayerSession;
     }
 #endif

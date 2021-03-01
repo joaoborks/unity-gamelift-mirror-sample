@@ -470,6 +470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee217a5280600ef40802364349d99290, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  local: 0
 --- !u!1 &1373024404
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,6 +568,7 @@ GameObject:
   - component: {fileID: 1719831324}
   - component: {fileID: 1719831323}
   - component: {fileID: 1719831322}
+  - component: {fileID: 1719831325}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -583,21 +585,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1719831321}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 7777
+  Port: 7779
   NoDelay: 1
-  SendTimeout: 5000
-  ReceiveTimeout: 30000
-  serverMaxMessageSize: 16384
-  serverMaxReceivesPerTick: 10000
-  serverSendQueueLimitPerConnection: 10000
-  serverReceiveQueueLimitPerConnection: 10000
-  clientMaxMessageSize: 16384
-  clientMaxReceivesPerTick: 1000
-  clientSendQueueLimit: 10000
-  clientReceiveQueueLimit: 10000
+  Interval: 10
+  FastResend: 2
+  CongestionWindow: 0
+  SendWindowSize: 4096
+  ReceiveWindowSize: 4096
+  debugLog: 1
+  statisticsGUI: 0
+  statisticsLog: 0
 --- !u!114 &1719831323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,12 +619,12 @@ MonoBehaviour:
   serverBatchInterval: 0
   offlineScene: Assets/Scenes/NetworkScene.unity
   onlineScene: Assets/Scenes/NetworkScene.unity
-  transport: {fileID: 1719831322}
+  transport: {fileID: 0}
   networkAddress: localhost
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
-  authenticator: {fileID: 0}
+  authenticator: {fileID: 1719831325}
   playerPrefab: {fileID: 3948826506204486539, guid: 74d96871bbda29e438a2e1f3b83e7cc9,
     type: 3}
   autoCreatePlayer: 1
@@ -644,6 +644,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1719831325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719831321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d105e918510993848b5c81a049692fa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnServerAuthenticated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClientAuthenticated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1836572411
 PrefabInstance:
   m_ObjectHideFlags: 0
