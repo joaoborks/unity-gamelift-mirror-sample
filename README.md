@@ -128,7 +128,7 @@ With the remote build setup, you can now create a fleet that will control the ga
 providing the correct executable path and extension. Also, it's helpful if you provide an additional argument to output logs to a file: `-logfile logs/server.log`.
 This way, when the Game Session gets terminated, you can download the logs via the AWS GameLift console.
 
-Also remember to open the ports necessary for the client to communicate with the server. For this sample, I simply opened ports 7770-7780 on TCP.
+Also remember to open the ports necessary for the client to communicate with the server. For this sample, I simply opened ports 7770-7780 on TCP and UDP.
 The fleet initialization should take some time. After its status is set to `ACTIVE` you can create a Game Session.
 
 ### Creating a Game Session
