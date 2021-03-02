@@ -33,8 +33,9 @@ Table of Contents
 Requirements
 ---
 
-- Unity 2019.4.17f1 or later
+- [Unity 2019.4.17f1](https://unity3d.com/get-unity/download/archive) or later
 - [AWS CLI](https://aws.amazon.com/cli/)
+- [Java](https://www.java.com/en/download/) [Local testing only]
 
 Understanding the Structure
 ---
@@ -88,10 +89,15 @@ specially if you still don't have an AWS account.
 ### Setup
 
 #### Local
+- Make sure to download the [GameLift Managed Servers SDK](https://aws.amazon.com/gamelift/getting-started/)
+- Open the GameLift Local folder and run:
+    ```
+    java -jar GameLiftLocal.jar -p 7778
+    ```
 - Set the port in `GameLiftClient.cs` line 43 to the port you started the GameLift local service:
-```csharp
-            config.ServiceURL = "http://localhost:7778";
-```
+    ```csharp
+                config.ServiceURL = "http://localhost:7778";
+    ```
 
 #### Remote
 - Setup your AWS credentials in `GameLiftClient.cs` line 46:
